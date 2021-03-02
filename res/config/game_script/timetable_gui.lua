@@ -586,10 +586,12 @@ function timetableGUI.makeArrDepWindow(lineID, stationID)
     addButton:setGravity(1,0)
     addButton:onClick(function()
         timetable.addCondition(lineID,stationID, {type = "ArrDep", ArrDep = {{0,0,0,0}}})
-        timetableGUI.clearConstraintWindow()
-        timetableGUI.makeArrDepWindow(lineID, stationID)
-        timetableGUI.initStationTable()
-        timetableGUI.fillStationTable(UIState.currentlySelectedLineTableIndex, false)
+        clearConstraintWindowLaterHACK = function()
+            timetableGUI.clearConstraintWindow()
+            timetableGUI.makeArrDepWindow(lineID, stationID)
+            timetableGUI.initStationTable()
+            timetableGUI.fillStationTable(UIState.currentlySelectedLineTableIndex, false)
+		end
     end)
 
     --setup header
