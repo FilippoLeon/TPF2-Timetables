@@ -17,6 +17,7 @@ local UIState = {
 }
 local co = nil
 local state = nil
+local clearConstraintWindowLaterHACK = nil
 
 local UIStrings = {
         arr	= _("arr_i18n"),
@@ -635,11 +636,12 @@ function timetableGUI.makeArrDepWindow(lineID, stationID)
         local deleteButton = api.gui.comp.Button.new(api.gui.comp.TextView.new("X") ,true)
         deleteButton:onClick(function()
             timetable.removeCondition(lineID, stationID, "ArrDep", k)
-            timetableGUI.clearConstraintWindow()
-            timetableGUI.makeArrDepWindow(lineID, stationID)
-            timetableGUI.initStationTable()
-            timetableGUI.fillStationTable(UIState.currentlySelectedLineTableIndex, false)
-
+            clearConstraintWindowLaterHACK = function()
+                timetableGUI.clearConstraintWindow()
+                timetableGUI.makeArrDepWindow(lineID, stationID)
+                timetableGUI.initStationTable()
+                timetableGUI.fillStationTable(UIState.currentlySelectedLineTableIndex, false)
+            end
         end)
 
         linetable:addRow({
@@ -805,6 +807,11 @@ function data()
 
         guiUpdate = function()
             game.interface.sendScriptEvent("timetableUpdate", "", timetable.getTimetableObject() )
+
+            if clearConstraintWindowLaterHACK then
+                clearConstraintWindowLaterHACK()
+                clearConstraintWindowLaterHACK = nil
+            end
 
             if not clockstate then
 				-- element for the divider
